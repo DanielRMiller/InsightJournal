@@ -1,0 +1,4 @@
+package InsightJournal;
+
+class GUI{
+}
