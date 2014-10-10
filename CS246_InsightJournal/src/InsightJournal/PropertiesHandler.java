@@ -21,7 +21,7 @@ public class PropertiesHandler {
     public void getPropValues() throws IOException {
         Properties prop = new Properties();
         //String propFileName = "C:\\Users\\Xandron\\Documents\\NetBeansProjects\\CS246_milestone3\\src\\cs246_milestone3\\config.properties";
-        String propFileName = "/cs246_milestone3/config.properties";
+        String propFileName = "/InsightJournal/config.properties";
         //String propFileName = "x.config";
         try {
         //InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
