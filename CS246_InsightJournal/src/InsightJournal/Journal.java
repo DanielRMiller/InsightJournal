@@ -42,7 +42,7 @@ public class Journal{
    {
       readInputFile(fileName);
       writeOutputFile();
-      //display();
+      display();
       PropertiesHandler prop = new PropertiesHandler();
        try {
            prop.getPropValues();
