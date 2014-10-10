@@ -46,6 +46,7 @@ public class Journal{
       PropertiesHandler prop = new PropertiesHandler();
        try {
            prop.getPropValues();
+           //System.out.println(PropertiesHandler.scripture);
            readScriptureFile(PropertiesHandler.scripture);
            readTermsFile(PropertiesHandler.terms);
        } catch (IOException ex) {
