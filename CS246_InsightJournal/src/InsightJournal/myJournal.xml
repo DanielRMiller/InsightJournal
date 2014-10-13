@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <journal>
 	<entry date="2014-09-16">
-		<scripture book="D&amp;C" chapter="107" startverse="1" />
-		<scripture book="D&amp;C" chapter="107" startverse="5" />
-		<scripture book="D&amp;C" chapter="107" startverse="12" />
-		<scripture book="D&amp;C" chapter="107" startverse="14" />
-		<scripture book="D&amp;C" chapter="107" startverse="18" endverse="19" />
-		<scripture book="D&amp;C" chapter="107" startverse="20" />
+		<scripture book="Doctrine and Covenants" chapter="107" startverse="1" />
+		<scripture book="Doctrine and Covenants" chapter="107" startverse="5" />
+		<scripture book="Doctrine and Covenants" chapter="107" startverse="12" />
+		<scripture book="Doctrine and Covenants" chapter="107" startverse="14" />
+		<scripture book="Doctrine and Covenants" chapter="107" startverse="18" endverse="19" />
+		<scripture book="Doctrine and Covenants" chapter="107" startverse="20" />
 		<topic>Priesthood</topic>
 		<topic>Revelation</topic>
 		<topic>Jesus Christ</topic>
@@ -52,12 +52,12 @@
 		<scripture book="Acts" chapter="8" startverse="15"/>
 		<scripture book="Acts" chapter="8" startverse="9"/>
 		<scripture book="Isaiah" chapter="14" startverse="12" endverse="14"/>
-		<scripture book="D&amp;C" chapter="29" startverse="36"/>
+		<scripture book="Doctrine and Covenants" chapter="29" startverse="36"/>
 		<scripture book="Moses" chapter="4" startverse="1"/>
 		<scripture book="Psalms" chapter="106" startverse="33"/>
 		<scripture book="Numbers" chapter="12" startverse="10"/>
 		<scripture book="Deuteronomy" chapter="4" startverse="21"/>
-		<scripture book="D&amp;C" chapter="121" />
+		<scripture book="Doctrine and Covenants" chapter="121" />
 		<scripture book="Acts" chapter="8" startverse="21"/>
 		<topic>Priesthood</topic>
 		<topic>Holy Ghost</topic>

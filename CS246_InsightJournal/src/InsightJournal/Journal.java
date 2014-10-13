@@ -150,10 +150,24 @@ public class Journal{
     }
     
     public final void display() {
-        System.out.println("Journal Display:");
         List<String> keys = new ArrayList<>(entries.keySet());
-        for (String key: keys) {
-            System.out.println(entries.get(key).display());
+        List<String> tempEntryKeys = new ArrayList<>();
+        
+        // Start finding all the Scripture References
+        System.out.println("Scripture References:");
+        for (String book: booksToFind) {
+            for (String key: keys) {
+                if (entries.get(key).hasbook(book)) {
+                    tempEntryKeys.add(key);
+                }
+            }
+            if (!tempEntryKeys.isEmpty()) {
+                System.out.println(book);
+                for (String key: tempEntryKeys) {
+                    System.out.println("\t" + key);
+                }
+                tempEntryKeys.clear();
+            }
         }
     }
     
