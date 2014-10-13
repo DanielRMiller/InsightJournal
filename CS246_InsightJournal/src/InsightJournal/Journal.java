@@ -169,6 +169,23 @@ public class Journal{
                 tempEntryKeys.clear();
             }
         }
+        
+        // Start finding all the Terms References
+        System.out.println("\nScripture References:");
+        for (String term: termsToFind) {
+            for (String key: keys) {
+                if (entries.get(key).hasTerm(term)) {
+                    tempEntryKeys.add(key);
+                }
+            }
+            if (!tempEntryKeys.isEmpty()) {
+                System.out.println(term);
+                for (String key: tempEntryKeys) {
+                    System.out.println("\t" + key);
+                }
+                tempEntryKeys.clear();
+            }
+        }
     }
     
     private void readScriptureFile(String scriptureFile) throws IOException{

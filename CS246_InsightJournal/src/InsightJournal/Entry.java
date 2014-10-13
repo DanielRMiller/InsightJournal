@@ -52,4 +52,13 @@ class Entry{
         }
         return false;
     }
+
+    boolean hasTerm(String term) {
+        for(String tempTopic : topicList){
+            if (tempTopic.equals(term)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
