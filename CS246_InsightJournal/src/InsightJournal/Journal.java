@@ -2,6 +2,7 @@ package InsightJournal;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -188,7 +189,7 @@ public class Journal{
         }
     }
     
-    private void readScriptureFile(String scriptureFile) throws IOException{
+    private void readScriptureFile(String scriptureFile) throws FileNotFoundException, IOException {
         FileReader in = new FileReader(scriptureFile);
         BufferedReader br = new BufferedReader(in);
         
@@ -202,7 +203,7 @@ public class Journal{
         br.close();
     }
     
-    private void readTermsFile(String termsFile) throws IOException{
+    private void readTermsFile(String termsFile) throws FileNotFoundException, IOException {
         FileReader in = new FileReader(termsFile);
         BufferedReader br = new BufferedReader(in);
         
