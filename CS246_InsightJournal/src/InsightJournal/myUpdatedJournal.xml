@@ -1,6 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <journal>
-  <entry date="2014-09-18"/>
-  <entry date="2014-09-17"/>
-  <entry date="2014-09-16"/>
+  <entry date="2014-09-18">
+    <scripture book="Abraham" chapter="1" endverse="0" startverse="0"/>
+    <scripture book="Abraham" chapter="1" endverse="0" startverse="2"/>
+    <scripture book="Matthew" chapter="7" endverse="0" startverse="7"/>
+    <scripture book="1 Nephi" chapter="10" endverse="0" startverse="19"/>
+    <scripture book="Acts" chapter="8" endverse="0" startverse="0"/>
+  </entry>
+  <entry date="2014-09-17">
+    <scripture book="Acts" chapter="8" endverse="0" startverse="0"/>
+    <scripture book="Acts" chapter="8" endverse="0" startverse="16"/>
+    <scripture book="Acts" chapter="8" endverse="0" startverse="15"/>
+    <scripture book="Acts" chapter="8" endverse="0" startverse="9"/>
+    <scripture book="Isaiah" chapter="14" endverse="14" startverse="12"/>
+    <scripture book="Doctrine and Covenants" chapter="29" endverse="0" startverse="36"/>
+    <scripture book="Moses" chapter="4" endverse="0" startverse="1"/>
+    <scripture book="Psalms" chapter="106" endverse="0" startverse="33"/>
+    <scripture book="Numbers" chapter="12" endverse="0" startverse="10"/>
+    <scripture book="Deuteronomy" chapter="4" endverse="0" startverse="21"/>
+    <scripture book="Doctrine and Covenants" chapter="121" endverse="0" startverse="0"/>
+    <scripture book="Acts" chapter="8" endverse="0" startverse="21"/>
+  </entry>
+  <entry date="2014-09-16">
+    <scripture book="Doctrine and Covenants" chapter="107" endverse="0" startverse="1"/>
+    <scripture book="Doctrine and Covenants" chapter="107" endverse="0" startverse="5"/>
+    <scripture book="Doctrine and Covenants" chapter="107" endverse="0" startverse="12"/>
+    <scripture book="Doctrine and Covenants" chapter="107" endverse="0" startverse="14"/>
+    <scripture book="Doctrine and Covenants" chapter="107" endverse="19" startverse="18"/>
+    <scripture book="Doctrine and Covenants" chapter="107" endverse="0" startverse="20"/>
+  </entry>
 </journal>

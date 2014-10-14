@@ -164,6 +164,30 @@ public class Journal{
             entryEle.setAttributeNode(attr);
             
             // Scripture Time
+            List<Scripture> scriptures = currentEntry.getScriptureList();
+            for (Scripture scripture : scriptures) {
+                // Scripture element
+                Element scriptureEle = doc.createElement("scripture");
+                entryEle.appendChild(scriptureEle);
+                
+                // Add Scripture's Book
+                Attr book = doc.createAttribute("book");
+                book.setValue(scripture.getBook());
+                scriptureEle.setAttributeNode(book);
+                // Add Scripture's Chapter
+                Attr chapter = doc.createAttribute("chapter");
+                chapter.setValue(Integer.toString(scripture.getChapter()));
+                scriptureEle.setAttributeNode(chapter);
+                // Add Scripture's Book
+                Attr startverse = doc.createAttribute("startverse");
+                startverse.setValue(Integer.toString(scripture.getStartVerse()));
+                scriptureEle.setAttributeNode(startverse);
+                // Add Scripture's Book
+                Attr endverse = doc.createAttribute("endverse");
+                endverse.setValue(Integer.toString(scripture.getEndVerse()));
+                scriptureEle.setAttributeNode(endverse);
+                
+            }
         }
         // write the content into xml file
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
