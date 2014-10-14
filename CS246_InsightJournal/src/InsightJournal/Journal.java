@@ -11,6 +11,12 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -48,7 +54,12 @@ public class Journal{
             String fileName = args[1];
             // Get everything in from the XML file
             readInputFile(fileName);
-            writeOutputFile();
+            // Get the document created for writing
+            try {
+                writeXMLDocument();
+            } catch (Exception ex) {
+                Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
+            }
             // displayTest(); // This is to test the XML is loaded (Replace in tests)
             
             // Get everything loaded in from the config.properties file.
@@ -63,7 +74,7 @@ public class Journal{
             }
             
             // display desired output for the journal (match terms and scriptures with entries)
-            display();
+            // display();
         }
         else
             System.out.println("Sorry, your files do not match the necessary types");
@@ -126,7 +137,51 @@ public class Journal{
         }
         return rEntry;
     }
-    private void writeOutputFile() {}
+    private void writeXMLDocument() throws Exception{
+        System.out.println("Building document");
+        
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        
+        Document doc = builder.newDocument();
+        
+        // Root element
+        Element rootElement = doc.createElement("journal");
+        doc.appendChild(rootElement);
+        
+        List<String> entryKeys = new ArrayList<>(entries.keySet());
+        for (String entryKey : entryKeys) {
+            // The entry we are working with
+            Entry currentEntry = entries.get(entryKey);
+            
+            // Entry element
+            Element entryEle = doc.createElement("entry");
+            rootElement.appendChild(entryEle);
+            
+            // Add Entry Date
+            Attr attr = doc.createAttribute("date");
+            attr.setValue(entryKey);
+            entryEle.setAttributeNode(attr);
+            
+            // Scripture Time
+        }
+        // write the content into xml file
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(new File("C:\\Users\\Xandron\\Documents\\NetBeansProjects\\InsightJournal\\CS246_InsightJournal\\src\\InsightJournal\\myUpdatedJournal.xml"));
+        
+        // Output to console for testing
+        // StreamResult result = new StreamResult(System.out);
+        
+        transformer.transform(source, result);
+        
+        System.out.println("File saved!");
+    }
     
     private Scripture parseScripture(Element rootScriptureElement) {
         Scripture rScripture = new Scripture();
