@@ -32,15 +32,17 @@ public class Journal{
     private List<String> termsToFind = new ArrayList<>();
     
     public static void main(String[] args){
-        if (args.length == 1) {
-            Journal j = new Journal(args[0]);
+        if (args.length == 3) {
+            // System.out.println(args[1]); // test argument
+            Journal j = new Journal(args);
         }
         else
             System.out.println("Cannot find filename");
     }
     
-    Journal(String fileName)
+    Journal(String[] args)
     {
+        String fileName = args[1];
         // Get everything in from the XML file
         readInputFile(fileName);
         writeOutputFile();
