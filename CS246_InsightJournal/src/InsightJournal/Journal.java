@@ -186,7 +186,14 @@ public class Journal{
                 Attr endverse = doc.createAttribute("endverse");
                 endverse.setValue(Integer.toString(scripture.getEndVerse()));
                 scriptureEle.setAttributeNode(endverse);
-                
+            }
+            // Topic time
+            List<String> topics = currentEntry.getTopicList();
+            for (String topic : topics) {
+                // Topic element
+                Element topicEle = doc.createElement("topic");
+		topicEle.appendChild(doc.createTextNode(topic));
+                entryEle.appendChild(topicEle);
             }
         }
         // write the content into xml file
