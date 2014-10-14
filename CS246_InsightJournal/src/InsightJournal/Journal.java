@@ -195,6 +195,11 @@ public class Journal{
 		topicEle.appendChild(doc.createTextNode(topic));
                 entryEle.appendChild(topicEle);
             }
+            
+            // Content
+            Element contentEle = doc.createElement("content");
+            contentEle.appendChild(doc.createTextNode(currentEntry.getContent()));
+            entryEle.appendChild(contentEle);
         }
         // write the content into xml file
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
