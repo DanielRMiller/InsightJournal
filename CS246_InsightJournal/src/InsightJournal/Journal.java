@@ -42,25 +42,31 @@ public class Journal{
     
     Journal(String[] args)
     {
-        String fileName = args[1];
-        // Get everything in from the XML file
-        readInputFile(fileName);
-        writeOutputFile();
-        // displayTest(); // This is to test the XML is loaded (Replace in tests)
-        
-        // Get everything loaded in from the config.properties file.
-        PropertiesHandler prop = new PropertiesHandler();
-        try {
-            prop.getPropValues();
-            //System.out.println(PropertiesHandler.scripture);
-            readScriptureFile(PropertiesHandler.scripture);
-            readTermsFile(PropertiesHandler.terms);
-        } catch (IOException ex) {
-            Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
+        if (args[0].split("\\.")[1].equals("txt") &&
+                args[1].split("\\.")[1].equals("xml") &&
+                args[2].split("\\.")[1].equals("txt")){
+            String fileName = args[1];
+            // Get everything in from the XML file
+            readInputFile(fileName);
+            writeOutputFile();
+            // displayTest(); // This is to test the XML is loaded (Replace in tests)
+            
+            // Get everything loaded in from the config.properties file.
+            PropertiesHandler prop = new PropertiesHandler();
+            try {
+                prop.getPropValues();
+                //System.out.println(PropertiesHandler.scripture);
+                readScriptureFile(PropertiesHandler.scripture);
+                readTermsFile(PropertiesHandler.terms);
+            } catch (IOException ex) {
+                Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            // display desired output for the journal (match terms and scriptures with entries)
+            display();
         }
-        
-        // display desired output for the journal (match terms and scriptures with entries)
-        display();
+        else
+            System.out.println("Sorry, your files do not match the necessary types");
     }
     
     private void readInputFile(String filename) {
