@@ -131,18 +131,18 @@ public class Journal{
                             br.reset();
                         
                         // After we got all the content
-                        System.out.println("newEntry Date: " + newEntry.getDate()); // same thing
+                        // System.out.println("newEntry Date: " + newEntry.getDate());
                         newEntry.parseForScriptures(newContent);
-                        System.out.println("newEntry Scriptures: ");
+                        System.out.println("newEntry Scriptures: " + newEntry.getScriptureList());
                         newEntry.parseForTopics(newContent);
                         System.out.println("newEntry Topics: " + newEntry.getTopicList());
                         newEntry.setContent(newContent);
-                        System.out.println("newEntry Content: " + newEntry.getContent());
+                        // System.out.println("newEntry Content: " + newEntry.getContent());
                         // Why is getDate null?
                         if (newEntry.getDate() != null)
                             entries.put(newEntry.getDate(), newEntry);
                         newEntry = new Entry();
-                    };
+                    }
                 }
             } catch (Exception e) { // If format not correct for first entry
                 System.out.println("FAILED FILE READ IN!");
@@ -269,7 +269,7 @@ public class Journal{
         
         transformer.transform(source, result);
         
-        System.out.println("File saved!");
+        // System.out.println("File saved!");
     }
     
     private Scripture parseScripture(Element rootScriptureElement) {
