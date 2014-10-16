@@ -1,6 +1,8 @@
 package InsightJournal;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class Entry{
     private String date;
@@ -10,7 +12,10 @@ class Entry{
     
     // CONSTRUCTOR
     Entry(){}
-    Entry(String date, String content){}
+    Entry(String newDate, String newContent){
+        date = newDate;
+        content = newContent;
+    }
     
     // GETTERS
     public String getContent(){return content;}
@@ -52,7 +57,7 @@ class Entry{
         }
         return false;
     }
-
+    
     boolean hasTerm(String term) {
         for(String tempTopic : topicList){
             if (tempTopic.equals(term)){
@@ -60,5 +65,25 @@ class Entry{
             }
         }
         return false;
+    }
+    
+    void parseForScriptures(String newContent) {
+        // This is the Regular Expression that we worked on a lot.
+        String exp = "((\\d\\s)?+[a-zA-Z]+\\s\\d{1,3}:\\d{1,3})|([a-zA-Z]+)\\schapter\\s(\\d{1,3})";
+        Pattern pattern = Pattern.compile(exp);
+        Matcher matcher = pattern.matcher(newContent);
+        // When we find a match, matcher.find() will be true
+        while (matcher.find()) {
+            // If this is in the 1st format we leave it as is.
+            if (matcher.group(1) != null) {
+                System.out.println(matcher.group(1));
+            } // close if
+            // If this is in the 2nd format (we use 2-4 because of the "# " for
+            //   2 Nephi is group 2) then we output without the chapter.
+            if (matcher.group(3) != null) {
+                System.out.println(matcher.group(3) + " " + matcher.group(4));
+            } } } // close if, while, while
+    
+    void parseForTopics(String newContent) {
     }
 }

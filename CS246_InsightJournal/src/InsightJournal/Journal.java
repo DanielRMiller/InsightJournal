@@ -51,16 +51,21 @@ public class Journal{
         if (args[0].split("\\.")[1].equals("txt") &&
                 args[1].split("\\.")[1].equals("xml") &&
                 args[2].split("\\.")[1].equals("txt")){
-            String fileName = args[1];
+            String inTXT = args [0];
+            String inXML = args[1];
             // Get everything in from the XML file
-            readInputFile(fileName);
+            readInputFile(inTXT);
             // Get the document created for writing
+            
+            
+            // displayTest(); // This is to test the XML is loaded (Replace in tests)
+            
+            
             try {
                 writeXMLDocument();
             } catch (Exception ex) {
                 Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
             }
-            // displayTest(); // This is to test the XML is loaded (Replace in tests)
             
             // Get everything loaded in from the config.properties file.
             PropertiesHandler prop = new PropertiesHandler();
@@ -81,21 +86,69 @@ public class Journal{
     }
     
     private void readInputFile(String filename) {
-        try {
-            File xmlFile = new File(filename);
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(xmlFile);
-            doc.getDocumentElement().normalize();
-            
-            System.out.println("Loading file \"" + filename + "\"\n");
-            
-            Element rootElement = doc.getDocumentElement();
-            entries = parseJournal(rootElement);
-            
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            System.out.println("Sorry, but your file was not able to be parsed.");
-        }
+        String fileType = filename.split("\\.")[1];
+        if (fileType.equals("xml")){
+            try {
+                File xmlFile = new File(filename);
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(xmlFile);
+                doc.getDocumentElement().normalize();
+                
+                System.out.println("Loading file \"" + filename + "\"\n");
+                
+                Element rootElement = doc.getDocumentElement();
+                entries = parseJournal(rootElement);
+                
+            } catch (ParserConfigurationException | SAXException | IOException e) {
+                System.out.println("Sorry, but your file was not able to be parsed.");
+            }
+        } else if (fileType.equals("txt"))  {
+            try {                
+                FileReader fin = new FileReader(filename);
+                BufferedReader br = new BufferedReader(fin);
+                Entry newEntry = new Entry();
+                String currentLine = ""; 
+                String newContent = "";
+                br.mark(1);
+                while(br.ready()) {
+                    currentLine = br.readLine();
+                    if (currentLine.equals("-----")) { // Assume dashed line is always followed by date line
+                        newEntry.setDate(br.readLine()); // Set the date to 2nd line
+                        newEntry.setContent("");
+                        newContent = "";
+                    }
+                    else {
+                        while (!currentLine.equals("-----") && br.ready()) { // keep reading till we can't or we hit a new entry
+                            // System.out.println("In while loop");
+                            newContent = newContent + currentLine;
+                            br.mark(255);
+                            currentLine = br.readLine();
+                        }
+                        if (!currentLine.equals("-----"))
+                            newContent = newContent + currentLine;
+                        if (br.ready())
+                            br.reset();
+                        
+                        // After we got all the content
+                        System.out.println("newEntry Date: " + newEntry.getDate()); // same thing
+                        newEntry.parseForScriptures(newContent);
+                        System.out.println("newEntry Scriptures: ");
+                        newEntry.parseForTopics(newContent);
+                        System.out.println("newEntry Topics: " + newEntry.getTopicList());
+                        newEntry.setContent(newContent);
+                        System.out.println("newEntry Content: " + newEntry.getContent());
+                        // Why is getDate null?
+                        if (newEntry.getDate() != null)
+                            entries.put(newEntry.getDate(), newEntry);
+                        newEntry = new Entry();
+                    };
+                }
+            } catch (Exception e) { // If format not correct for first entry
+                System.out.println("FAILED FILE READ IN!");
+                e.printStackTrace();
+            }
+        } // Exit text reader
     }
     private Map<String, Entry> parseJournal(Element rootElement){
         Map<String, Entry> entryMap = new HashMap<>();
@@ -192,7 +245,7 @@ public class Journal{
             for (String topic : topics) {
                 // Topic element
                 Element topicEle = doc.createElement("topic");
-		topicEle.appendChild(doc.createTextNode(topic));
+                topicEle.appendChild(doc.createTextNode(topic));
                 entryEle.appendChild(topicEle);
             }
             

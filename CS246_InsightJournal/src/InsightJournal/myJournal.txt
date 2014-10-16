@@ -1,0 +1,10 @@
+-----
+2014-10-12
+This is the first entry.
+ 
+It has several lines.
+ 
+This is the last line.
+-----
+2014-10-13
+This is another entry.
