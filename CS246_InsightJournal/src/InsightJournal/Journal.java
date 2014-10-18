@@ -1,9 +1,11 @@
 package InsightJournal;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
@@ -35,7 +37,7 @@ public class Journal{
     private String outputFileName;
     private final GUI gui = new GUI();
     private List<String> booksToFind = new ArrayList<>();
-    private List<String> termsToFind = new ArrayList<>();
+    private List<Topic> termsMasterList = new ArrayList<>();
     
     public static void main(String[] args){
         if (args.length == 3) {
@@ -51,14 +53,15 @@ public class Journal{
         if (args[0].split("\\.")[1].equals("txt") &&
                 args[1].split("\\.")[1].equals("xml") &&
                 args[2].split("\\.")[1].equals("txt")){
-            String inTXT = args [0];
-            String inXML = args[1];
+            String inTXT = args[0];
+            String XML = args[1];
+            String outTXT = args[2];
             // Get everything in from the XML file
             readInputFile(inTXT);
             // Get the document created for writing
             
             
-            // displayTest(); // This is to test the XML is loaded (Replace in tests)
+            displayTest(); // This is to test the XML is loaded (Replace in tests)
             
             
             try {
@@ -78,8 +81,9 @@ public class Journal{
                 Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
             }
             
+            writeTextDocument(outTXT);
             // display desired output for the journal (match terms and scriptures with entries)
-            // display();
+            display();
         }
         else
             System.out.println("Sorry, your files do not match the necessary types");
@@ -133,7 +137,7 @@ public class Journal{
                         // After we got all the content
                         // System.out.println("newEntry Date: " + newEntry.getDate());
                         newEntry.parseForScriptures(newContent);
-                        System.out.println("newEntry Scriptures: " + newEntry.getScriptureList());
+                        // System.out.println("newEntry Scriptures: " + newEntry.getScriptureList());
                         newEntry.parseForTopics(newContent);
                         System.out.println("newEntry Topics: " + newEntry.getTopicList());
                         newEntry.setContent(newContent);
@@ -324,8 +328,9 @@ public class Journal{
         }
         
         // Start finding all the Terms References
-        System.out.println("\nScripture References:");
-        for (String term: termsToFind) {
+        System.out.println("\nTopic References:");
+        for (Topic topic: termsMasterList) {
+            String term = topic.getKey();
             for (String key: keys) {
                 if (entries.get(key).hasTerm(term)) {
                     tempEntryKeys.add(key);
@@ -342,6 +347,7 @@ public class Journal{
     }
     
     private void readScriptureFile(String scriptureFile) throws FileNotFoundException, IOException {
+        System.out.println("Read Scripture File!");
         FileReader in = new FileReader(scriptureFile);
         BufferedReader br = new BufferedReader(in);
         
@@ -356,15 +362,58 @@ public class Journal{
     }
     
     private void readTermsFile(String termsFile) throws FileNotFoundException, IOException {
+        System.out.println("Entered Read Terms File!");
         FileReader in = new FileReader(termsFile);
         BufferedReader br = new BufferedReader(in);
+        Topic newTopic = new Topic();
         
         String currentLine = br.readLine();
         while(currentLine != null) {
-            String term = currentLine.split(":")[0].trim();
-            termsToFind.add(term);
+            String[] topicAndSyns = currentLine.split(":");
+            newTopic.setKey(topicAndSyns[0]);
+            String[] synArray = topicAndSyns[1].split(",");
+            List<String> synList= new ArrayList<>();
+            for (String syn : synArray) {
+                synList.add(syn);
+            }
+            newTopic.setSynList(synList);
+            termsMasterList.add(newTopic);
             currentLine = br.readLine();
         }
         br.close();
+    }
+
+    private void writeTextDocument(String fileName) {
+        BufferedWriter bw;
+        
+        try {
+            System.out.println("Writing entries to text file: " + fileName);
+            File fout = new File(fileName);
+            bw = new BufferedWriter(new FileWriter(fout));
+            
+            int counter = 0;
+            
+            for (Map.Entry<String, Entry> entry : entries.entrySet()) {
+                String key = entry.getKey();
+                Entry value = entry.getValue();
+                
+                //System.out.println(key + ": " + value.getContent());
+                
+                if (counter == 0) {
+                    bw.write("-----\n");
+                    counter++;
+                } else
+                    bw.write("\n-----\n");
+                bw.write(key + "\n\n");
+                bw.write(value.getContent() + "\n");
+                
+            }
+            
+            System.out.println("Successfully wrote the text file!");
+            
+            bw.close();
+        } catch (Exception e) {
+            System.err.println("Unable to write \"WrittenJournal.txt\"");
+        }
     }
 }
