@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Xandron
  */
-public class Topic {
+public class Term {
     String key;
     List<String> synList = new ArrayList<>();
     
@@ -31,11 +31,18 @@ public class Topic {
     }
     
     public boolean matches(String content) {
+        // System.out.println("Entered matches");
         for (String syn : synList) {
-            if (content.contains(syn)) {
+            // System.out.println("Trying to match " + syn + " to \"" + content + "\"");
+            if (content.toLowerCase().contains(syn.toLowerCase())) {
+                // System.out.println("Found a match in matches!");
                 return true;
             }
         }
         return false;
+    }
+    
+    public String display(){
+        return key + " " + synList;
     }
 }

@@ -7,43 +7,50 @@ import java.util.regex.Pattern;
 class Entry{
     private String date;
     private List<Scripture> scriptureList = new ArrayList<>();
-    private List<String> topicList = new ArrayList<>();
+    private List<String> termList = new ArrayList<>();
+    private List<Term> masterTermList = new ArrayList<>();
     private String content;
     
-    // CONSTRUCTOR
-    Entry(){}
-    Entry(String newDate, String newContent){
+    // CONSTRUCTORS
+    Entry(List<Term> newMasterTermList){
+        this("", "", newMasterTermList);
+    }
+    Entry(String newDate, String newContent, List<Term> newMasterTermList){
+        // System.out.println("Entered Entry");
+        masterTermList = newMasterTermList;
+        // for (Term term : newMasterTermList) {System.out.println(term.display());}
         date = newDate;
         content = newContent;
+        parseForScriptures();
+        parseForTerms();
     }
     
     // GETTERS
     public String getContent(){return content;}
     public List<Scripture> getScriptureList(){return scriptureList;}
     public String getDate(){return date;}
-    public List<String> getTopicList(){return topicList;}
+    public List<String> getTermList(){return termList;}
     
     // SETTERS
-    public void setContent(String newContent){content = newContent;}
+    public void setContent(String newContent){
+        content = newContent;
+        parseForScriptures();
+        parseForTerms();
+    }
     public void setScriptureList(List<Scripture> newScriptureList){scriptureList = newScriptureList;}
     public void setDate(String newDate){date = newDate;}
-    public void setTopicList(List<String> newTopicList){topicList = newTopicList;}
+    public void setTopicList(List<String> newTermList){termList = newTermList;}
     
     public String print(int num){return "";}
-    private void findScripture(){}
-    private void findTopics(){}
-    private void extractScripture(){}
-    private void extractTopic(){}
-    private void scriptureFormat(int num){}
-    public void addTopic(String newTopic){topicList.add(newTopic);}
+    public void addTerm(String newTerm){termList.add(newTerm);}
     public void addScripture(Scripture newScripture){scriptureList.add(newScripture);}
     public String display(){
         String rString = "Entry Display:\n" + "Date : " + date + "\n";
         for (Scripture scripture : scriptureList) {
             rString = rString + scripture.display();
         }
-        for (String topic : topicList) {
-            rString = rString + topic + " ";
+        for (String term : termList) {
+            rString = rString + term + " ";
         }
         rString = rString + "\n" + content + "\n";
         return rString;
@@ -59,22 +66,23 @@ class Entry{
     }
     
     boolean hasTerm(String term) {
-        for(String tempTopic : topicList){
-            if (tempTopic.equals(term)){
+        for(String tempTerm : termList){
+            if (tempTerm.equals(term)){
                 return true;
             }
         }
         return false;
     }
     
-    void parseForScriptures(String newContent) {
-        System.out.println("entered parseForScriptures");
+    private void parseForScriptures() {
+        // System.out.println("entered parseForScriptures");
         // This is the Regular Expression that we worked on a lot.
         String exp = "((\\d\\s)?+[a-zA-Z]+\\s\\d{1,3}:\\d{1,3})|([a-zA-Z]+)\\schapter\\s(\\d{1,3})";
         Pattern pattern = Pattern.compile(exp);
-        Matcher matcher = pattern.matcher(newContent);
+        Matcher matcher = pattern.matcher(content);
         // When we find a match, matcher.find() will be true
         while (matcher.find()) {
+            // System.out.println("Found a scripture match!");
             String scripString = "";
             // If this is in the 1st format we leave it as is.
             if (matcher.group(1) != null) {
@@ -86,19 +94,27 @@ class Entry{
                 scripString = (matcher.group(3) + " " + matcher.group(4));
             } // close if
             if (scripString != null) {
-                System.out.println("scripString is: " + scripString);
-                System.out.println("scriptureList is: " + scriptureList);
+                // System.out.println("scripString is: " + scripString);
+                // System.out.println("scriptureList is: " + scriptureList);
                 parseScripture(scripString);
-                System.out.println("scriptureList is: " + scriptureList);
+                // System.out.println("scriptureList is: " + scriptureList);
             } // close if
         } // close while
     } // close parse
     
-    void parseForTopics(String newContent) {
+    private void parseForTerms() {
+        // System.out.println("Entered parseForTerms");
+        for(Term t : masterTermList){
+            // System.out.println("Searching for " + t.getKey());
+            if (t.matches(content)) {
+                // System.out.println("Found a Match!");
+                termList.add(t.getKey());
+            }
+        }
     }
 
     private void parseScripture(String scripString) {
-        System.out.println("entered parseScripture");
+        // System.out.println("entered parseScripture");
         Scripture newScripture = new Scripture();
         // This is the Regular Expression that we worked on a lot.
         String exp = "(((\\d\\s)?+[a-zA-Z]+)\\s(\\d{1,3}):(\\d{1,3}))";
@@ -108,16 +124,14 @@ class Entry{
         if (matcher.find()) {
             // parse the book out to a new scripture
             newScripture.setBook(matcher.group(2));
-            System.out.println("newScripture book is: " + newScripture.getBook());
+            // System.out.println("newScripture book is: " + newScripture.getBook());
             newScripture.setChapter(Integer.parseInt(matcher.group(4)));
-            System.out.println("newScripture chapter is: " + newScripture.getChapter());
+            // System.out.println("newScripture chapter is: " + newScripture.getChapter());
             newScripture.setStartVerse(Integer.parseInt(matcher.group(5)));
-            System.out.println("newScripture StartVerse is: " + newScripture.getStartVerse());
+            // System.out.println("newScripture StartVerse is: " + newScripture.getStartVerse());
             newScripture.setEndVerse(0);
             scriptureList.add(newScripture);
-            for (Scripture tempScrip : scriptureList) {
-                System.out.println(tempScrip.display());
-            }
+            // for (Scripture tempScrip : scriptureList) {System.out.println(tempScrip.display());}
         } // close if
     }
 }

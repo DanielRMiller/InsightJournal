@@ -31,13 +31,12 @@ import org.xml.sax.SAXException;
  * @author Xandron
  */
 public class Journal{
-    
     private Map<String, Entry> entries = new TreeMap<>();
     private String inputFileName;
     private String outputFileName;
     private final GUI gui = new GUI();
     private List<String> booksToFind = new ArrayList<>();
-    private List<Topic> termsMasterList = new ArrayList<>();
+    private List<Term> masterTermList = new ArrayList<>();
     
     public static void main(String[] args){
         if (args.length == 3) {
@@ -50,25 +49,14 @@ public class Journal{
     
     Journal(String[] args)
     {
+        // System.out.println("Entered Journal");
+        // Check if we have the right file types
         if (args[0].split("\\.")[1].equals("txt") &&
                 args[1].split("\\.")[1].equals("xml") &&
                 args[2].split("\\.")[1].equals("txt")){
             String inTXT = args[0];
             String XML = args[1];
             String outTXT = args[2];
-            // Get everything in from the XML file
-            readInputFile(inTXT);
-            // Get the document created for writing
-            
-            
-            displayTest(); // This is to test the XML is loaded (Replace in tests)
-            
-            
-            try {
-                writeXMLDocument();
-            } catch (Exception ex) {
-                Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
-            }
             
             // Get everything loaded in from the config.properties file.
             PropertiesHandler prop = new PropertiesHandler();
@@ -81,7 +69,22 @@ public class Journal{
                 Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
             }
             
+            // Get everything in from the file into journal
+            readInputFile(inTXT);
+            
+            // Test what is currently in the Journal
+            // displayTest();
+            
+            // Write to the XML document
+            try {
+                writeXMLDocument();
+            } catch (Exception ex) {
+                Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            // Write to the TXT document
             writeTextDocument(outTXT);
+            
             // display desired output for the journal (match terms and scriptures with entries)
             display();
         }
@@ -90,6 +93,7 @@ public class Journal{
     }
     
     private void readInputFile(String filename) {
+        // System.out.println("Entered readinputFile");
         String fileType = filename.split("\\.")[1];
         if (fileType.equals("xml")){
             try {
@@ -111,7 +115,7 @@ public class Journal{
             try {                
                 FileReader fin = new FileReader(filename);
                 BufferedReader br = new BufferedReader(fin);
-                Entry newEntry = new Entry();
+                Entry newEntry = new Entry(masterTermList);
                 String currentLine = ""; 
                 String newContent = "";
                 br.mark(1);
@@ -119,7 +123,6 @@ public class Journal{
                     currentLine = br.readLine();
                     if (currentLine.equals("-----")) { // Assume dashed line is always followed by date line
                         newEntry.setDate(br.readLine()); // Set the date to 2nd line
-                        newEntry.setContent("");
                         newContent = "";
                     }
                     else {
@@ -136,16 +139,16 @@ public class Journal{
                         
                         // After we got all the content
                         // System.out.println("newEntry Date: " + newEntry.getDate());
-                        newEntry.parseForScriptures(newContent);
+                        // newEntry.parseForScriptures(newContent);
                         // System.out.println("newEntry Scriptures: " + newEntry.getScriptureList());
-                        newEntry.parseForTopics(newContent);
-                        System.out.println("newEntry Topics: " + newEntry.getTopicList());
+                        // newEntry.parseForTopics(newContent);
+                        // System.out.println("newEntry Topics: " + newEntry.getTermList());
                         newEntry.setContent(newContent);
                         // System.out.println("newEntry Content: " + newEntry.getContent());
                         // Why is getDate null?
                         if (newEntry.getDate() != null)
                             entries.put(newEntry.getDate(), newEntry);
-                        newEntry = new Entry();
+                        newEntry = new Entry(masterTermList);
                     }
                 }
             } catch (Exception e) { // If format not correct for first entry
@@ -155,6 +158,7 @@ public class Journal{
         } // Exit text reader
     }
     private Map<String, Entry> parseJournal(Element rootElement){
+        // System.out.println("Entered parseJournal");
         Map<String, Entry> entryMap = new HashMap<>();
         NodeList journalNodes = rootElement.getChildNodes();
         for (int i = 0; i < journalNodes.getLength(); i++) {
@@ -171,7 +175,8 @@ public class Journal{
     }
     
     private Entry parseEntry(Element rootEntryElement){
-        Entry rEntry = new Entry();
+        // System.out.println("Entered parseEntry");
+        Entry rEntry = new Entry(masterTermList);
         rEntry.setDate(rootEntryElement.getAttribute("date"));
         NodeList entryNodes = rootEntryElement.getChildNodes();
         for (int i = 0; i < entryNodes.getLength(); i ++) {
@@ -184,7 +189,7 @@ public class Journal{
                         rEntry.addScripture(parseScripture(entryElement));
                         break;
                     case "topic":
-                        rEntry.addTopic(entryElement.getTextContent());
+                        rEntry.addTerm(entryElement.getTextContent());
                         break;
                     case "content":
                         rEntry.setContent(entryElement.getTextContent().trim().replaceAll("\\n\\s+", "\n"));
@@ -195,7 +200,8 @@ public class Journal{
         return rEntry;
     }
     private void writeXMLDocument() throws Exception{
-        System.out.println("Building document");
+        // System.out.println("Entered writeXMLDocument");
+        // System.out.println("Building document");
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -244,10 +250,10 @@ public class Journal{
                 endverse.setValue(Integer.toString(scripture.getEndVerse()));
                 scriptureEle.setAttributeNode(endverse);
             }
-            // Topic time
-            List<String> topics = currentEntry.getTopicList();
+            // Term time
+            List<String> topics = currentEntry.getTermList();
             for (String topic : topics) {
-                // Topic element
+                // Term element
                 Element topicEle = doc.createElement("topic");
                 topicEle.appendChild(doc.createTextNode(topic));
                 entryEle.appendChild(topicEle);
@@ -277,6 +283,7 @@ public class Journal{
     }
     
     private Scripture parseScripture(Element rootScriptureElement) {
+        // System.out.println("Entered parseScripture");
         Scripture rScripture = new Scripture();
         NamedNodeMap attributes = rootScriptureElement.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -299,14 +306,14 @@ public class Journal{
         return rScripture;
     }
     public final void displayTest() {
+        // System.out.println("Entered displayTest");
         System.out.println("Journal Test Display:");
         List<String> keys = new ArrayList<>(entries.keySet());
-        for (String key: keys) {
-            System.out.println(entries.get(key).display());
-        }
+        // for (String key: keys) {System.out.println(entries.get(key).display());}
     }
     
     public final void display() {
+        // System.out.println("Entered display");
         List<String> keys = new ArrayList<>(entries.keySet());
         List<String> tempEntryKeys = new ArrayList<>();
         
@@ -328,8 +335,8 @@ public class Journal{
         }
         
         // Start finding all the Terms References
-        System.out.println("\nTopic References:");
-        for (Topic topic: termsMasterList) {
+        System.out.println("\nTerm References:");
+        for (Term topic: masterTermList) {
             String term = topic.getKey();
             for (String key: keys) {
                 if (entries.get(key).hasTerm(term)) {
@@ -346,8 +353,10 @@ public class Journal{
         }
     }
     
-    private void readScriptureFile(String scriptureFile) throws FileNotFoundException, IOException {
-        System.out.println("Read Scripture File!");
+    private void readScriptureFile(String scriptureFile) 
+            throws FileNotFoundException, IOException {
+        // System.out.println("Entered readscriptureFile");
+        //System.out.println("Read Scripture File!");
         FileReader in = new FileReader(scriptureFile);
         BufferedReader br = new BufferedReader(in);
         
@@ -361,29 +370,37 @@ public class Journal{
         br.close();
     }
     
-    private void readTermsFile(String termsFile) throws FileNotFoundException, IOException {
-        System.out.println("Entered Read Terms File!");
+    private void readTermsFile(String termsFile) 
+            throws FileNotFoundException, IOException {
+        // System.out.println("Entered readTermsFile!");
         FileReader in = new FileReader(termsFile);
         BufferedReader br = new BufferedReader(in);
-        Topic newTopic = new Topic();
+        Term newTerm = new Term();
         
-        String currentLine = br.readLine();
-        while(currentLine != null) {
+        String currentLine = "";
+        while(br.ready()) {
+            currentLine = br.readLine();
+            // System.out.println("Found a new Line");
             String[] topicAndSyns = currentLine.split(":");
-            newTopic.setKey(topicAndSyns[0]);
+            newTerm.setKey(topicAndSyns[0]);
             String[] synArray = topicAndSyns[1].split(",");
             List<String> synList= new ArrayList<>();
             for (String syn : synArray) {
                 synList.add(syn);
             }
-            newTopic.setSynList(synList);
-            termsMasterList.add(newTopic);
-            currentLine = br.readLine();
+            newTerm.setSynList(synList);
+            // System.out.println(newTerm.display());
+            masterTermList.add(newTerm);
+            
+            // for (Term t : masterTermList) { System.out.println(t.display());}
+            newTerm = new Term();
         }
         br.close();
+        // for (Term t : masterTermList) {System.out.println(t.display());}
     }
 
     private void writeTextDocument(String fileName) {
+        // System.out.println("Entered writeTextDocument");
         BufferedWriter bw;
         
         try {
